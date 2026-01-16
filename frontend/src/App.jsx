@@ -1,101 +1,107 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import './App.css';
-import MarketplaceABI from './Marketplace.json';
+// import MarketplaceABI from './Marketplace.json'; // Comment ออกไปก่อนเพราะเราใช้ Fake Mode
 
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; 
+
+// --- 1. ข้อมูลจำลองตั้งต้น (Cute Cat Theme Mock Data) ---
+const INITIAL_MOCK_PRODUCTS = [
+  { id: 1, name: "Fluffy Yarn Ball", price: "0.05", owner: "0xKitty...Paw1", isSold: false },
+  { id: 2, name: "Golden Fish Treat", price: "0.12", owner: "0xMeow...Boss", isSold: true },
+  { id: 3, name: "Cozy Cat Bed Pro", price: "0.80", owner: "0xPurr...Fect", isSold: false },
+  { id: 4, name: "Laser Pointer 3000", price: "0.02", owner: "0xChase...Dotts", isSold: false },
+];
 
 function App() {
   const [account, setAccount] = useState(null);
   const [contract, setContract] = useState(null);
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(INITIAL_MOCK_PRODUCTS);
   const [productName, setProductName] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // --- Logic เดิม (ไม่ต้องแก้) ---
+  // --- Logic เชื่อมต่อ Wallet (Fake Mode เน้นๆ) ---
   const connectWallet = async () => {
-    if (window.ethereum) {
-      try {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        const signer = await provider.getSigner();
-        setAccount(await signer.getAddress());
-        const marketplaceContract = new ethers.Contract(contractAddress, MarketplaceABI.abi, signer);
-        setContract(marketplaceContract);
-      } catch (error) { console.error(error); }
-    } else { alert("Please install Metamask!"); }
+    // Simulation Mode: สร้าง Address ปลอมๆ ที่ดูน่ารัก
+    const mockAddress = "0xCute...CatLover"; 
+    setLoading(true);
+    setTimeout(() => {
+        setAccount(mockAddress);
+        setLoading(false);
+        // alert(`🐾 Paw-some! Connected as ${mockAddress}`);
+    }, 800);
   };
 
-  const loadProducts = async () => {
-    if (!contract) return;
-    try {
-      const itemCount = await contract.nextId();
-      let items = [];
-      for (let i = 1; i < itemCount; i++) {
-        const item = await contract.products(i);
-        if (item.id > 0n) {
-          items.push({
-            id: item.id,
-            name: item.name,
-            price: ethers.formatEther(item.price),
-            owner: item.owner,
-            isSold: item.isSold
-          });
-        }
-      }
-      setProducts(items);
-    } catch (error) { console.error("Error loading:", error); }
-  };
-
-  useEffect(() => { if (contract) loadProducts(); }, [contract]);
-
+  // --- Add Product (Fake) ---
   const addProduct = async (e) => {
     e.preventDefault();
-    if (!contract) return;
-    try {
-      setLoading(true);
-      const tx = await contract.addProduct(productName, ethers.parseEther(productPrice));
-      await tx.wait();
-      alert("✅ Product Added!");
-      setProductName(""); setProductPrice(""); loadProducts();
-    } catch (error) { alert("Failed!"); console.error(error); }
+    if (!account) return alert("😿 Pls connect wallet to list goodies!");
+
+    setLoading(true);
+    
+    // --- Fake Simulation Logic ---
+    setTimeout(() => {
+    const newId = products.length + 1;
+    const newProduct = {
+        id: newId,
+        name: productName,
+        price: productPrice,
+        owner: account, // ใช้ Fake Account ที่ Login อยู่
+        isSold: false
+    };
+    setProducts([newProduct, ...products]); // เพิ่มของใหม่ไปบนสุด
+    // alert("😻 Meow! New item listed!");
+    setProductName(""); 
+    setProductPrice("");
     setLoading(false);
+    }, 1000);
   };
 
+  // --- Buy Product (Fake) ---
   const buyProduct = async (id, price) => {
-    if (!contract) return;
-    try {
-      setLoading(true);
-      const tx = await contract.buyProduct(id, { value: ethers.parseEther(price) });
-      await tx.wait();
-      alert("🎉 Bought Successfully!");
-      loadProducts();
-    } catch (error) { alert("Transaction Failed!"); }
+    if (!account) return alert("😿 Pls connect wallet to adopt!");
+
+    setLoading(true);
+
+    // --- Fake Simulation Logic ---
+    setTimeout(() => {
+    const updatedProducts = products.map(item => {
+        if (item.id === id) {
+        return { ...item, isSold: true, owner: account }; // เปลี่ยนเจ้าของเป็นเรา
+        }
+        return item;
+    });
+    setProducts(updatedProducts);
+    // alert("🎉 Yay! You adopted this item with treats!");
     setLoading(false);
+    }, 800);
   };
 
-  // --- UI ใหม่ ---
   return (
     <>
       <nav className="navbar">
         <div className="nav-container">
-          <div className="logo">🛍️ DApp Market</div>
-          <button className="connect-btn" onClick={connectWallet}>
-            {account ? `🟢 ${account.substring(0, 6)}...${account.slice(-4)}` : "Connect Wallet"}
+          {/* Logo เปลี่ยนเป็น icon แมว */}
+          <div className="logo">
+             🐱 Neko Market <span className="demo-badge">Demo</span>
+          </div>
+          <button className="connect-btn" onClick={connectWallet} disabled={loading}>
+            {loading ? "Connecting..." : (account ? `🐾 ${account}` : "Connect Paw-Wallet")}
           </button>
         </div>
       </nav>
 
       <main className="container">
         
-        {/* ส่วนที่ 1: กล่องเพิ่มสินค้า (วางด้านบน เด่นๆ) */}
+        {/* Section นี้ใส่หูแมวด้วย CSS */}
         <section className="create-section">
-          <h2>📢 Sell Your Item</h2>
+          <h2>✨ List Your Kitty Goodies</h2>
           <form className="add-form" onSubmit={addProduct}>
             <input
               className="input-field"
               type="text"
-              placeholder="What are you selling?"
+              placeholder="Item Name (e.g. Super Catnip)"
               value={productName}
               onChange={(e) => setProductName(e.target.value)}
               required
@@ -104,55 +110,58 @@ function App() {
               className="input-field"
               type="number"
               step="0.0001"
-              placeholder="Price (ETH)"
+              placeholder="Price in ETH treats 🐟"
               value={productPrice}
               onChange={(e) => setProductPrice(e.target.value)}
               required
             />
             <button className="add-btn" type="submit" disabled={loading || !account}>
-              {loading ? "Processing..." : "List Item +"}
+              {loading ? "Purring..." : "Meow-t it! (List Item)"}
             </button>
           </form>
         </section>
 
-        {/* ส่วนที่ 2: รายการสินค้า */}
         <section>
           <div className="section-header">
-            <h2>Explore Items</h2>
-            <span className="item-count">{products.length} Results</span>
+            <h2>💖 Fresh cat-lectibles</h2>
+            <span className="item-count">{products.length} Items found</span>
           </div>
 
           <div className="grid">
             {products.length === 0 ? (
-              <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
-                Currently no items for sale.
+              <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
+                <h3>😿 No items yet...</h3>
+                <p>Be the first cool cat to list something!</p>
               </div>
             ) : (
               products.map((item) => (
                 <div key={item.id.toString()} className={`card ${item.isSold ? 'sold' : ''}`}>
-                  {/* รูป Placeholder สวยๆ */}
+                  {/* เปลี่ยน Emoji ให้เข้าธีม */}
                   <div className="card-image-placeholder">
-                    {item.isSold ? "🔒" : "📦"}
+                    {item.isSold ? "💤" : (item.id % 2 === 0 ? "🧶" : "🐟")}
                   </div>
                   
                   <div className="card-body">
-                    <h3>{item.name}</h3>
-                    <div className="price">{item.price} ETH</div>
-                    
                     <div className="owner">
-                      <span>👤 Seller:</span>
-                      <span>{item.owner.substring(0, 6)}...</span>
+                      <span>🐱 Owner:</span>
+                      <span style={{ fontWeight: 600 }}>
+                        {item.owner.length > 15 ? item.owner.substring(0, 8) + "..." : item.owner}
+                      </span>
                     </div>
+                    
+                    <h3>{item.name}</h3>
+                    {/* ใส่ icon ปลาตรงราคา */}
+                    <div className="price">🐟 {item.price} ETH</div>
 
                     {item.isSold ? (
-                      <button className="action-btn btn-sold" disabled>Sold Out</button>
+                      <button className="action-btn btn-sold" disabled>Already Adopted 🏠</button>
                     ) : (
                       <button 
                         className="action-btn btn-buy"
                         onClick={() => buyProduct(item.id, item.price)}
-                        disabled={loading || !account || item.owner.toLowerCase() === account?.toLowerCase()}
+                        disabled={loading || !account || item.owner === account}
                       >
-                        {item.owner.toLowerCase() === account?.toLowerCase() ? "Your Item" : "Buy Now"}
+                        {account && item.owner === account ? "Your Item 🐾" : "Adopt Now ✨"}
                       </button>
                     )}
                   </div>
