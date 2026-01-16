@@ -1,0 +1,245 @@
+:root {
+  --primary: #6366f1;       /* Indigo 500 */
+  --primary-hover: #4f46e5; /* Indigo 600 */
+  --bg-body: #f1f5f9;       /* Slate 100 */
+  --card-bg: #ffffff;
+  --text-main: #0f172a;     /* Slate 900 */
+  --text-muted: #64748b;    /* Slate 500 */
+  --border: #e2e8f0;        /* Slate 200 */
+  --radius: 16px;
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Navbar --- */
+.navbar {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.connect-btn {
+  background-color: var(--text-main);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.connect-btn:hover {
+  background-color: #334155;
+  transform: translateY(-1px);
+}
+
+/* --- Main Layout --- */
+.container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* --- Add Product Section (Top) --- */
+.create-section {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.create-section h2 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.5rem;
+}
+
+.add-form {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap; /* ให้พับลงมาถ้้าจอเล็ก */
+}
+
+.input-field {
+  flex: 1;
+  min-width: 200px; /* ขยายเต็มที่แต่ไม่ต่ำกว่า 200px */
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 1rem;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.add-btn {
+  padding: 0.85rem 2rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 120px;
+}
+
+.add-btn:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+/* --- Products Grid --- */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+  font-size: 1.75rem;
+  margin: 0;
+}
+
+.item-count {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* Responsive Grid */
+  gap: 2rem;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+/* จำลองรูปภาพสินค้า (เพราะเราไม่มีรูปจริง) */
+.card-image-placeholder {
+  height: 160px;
+  background: linear-gradient(135deg, #e0e7ff, #f3e8ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+}
+
+.price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.owner {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: auto; /* ดันไปติดปุ่มด้านล่าง */
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.btn-buy {
+  background-color: var(--text-main);
+  color: white;
+}
+.btn-buy:hover { background-color: #000; }
+
+.btn-sold {
+  background-color: #fee2e2;
+  color: #ef4444;
+  cursor: default;
+}
+
+.card.sold { opacity: 0.75; }
+
+/* --- Mobile --- */
+@media (max-width: 640px) {
+  .add-form { flex-direction: column; }
+  .input-field, .add-btn { width: 100%; }
+  .section-header { flex-direction: column; gap: 0.5rem; }
+}
